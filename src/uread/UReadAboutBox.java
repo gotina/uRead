@@ -134,4 +134,5 @@ public class UReadAboutBox extends javax.swing.JDialog {
     private javax.swing.JButton closeButton;
     // End of variables declaration//GEN-END:variables
     
+	 //Comments to see if what I'm doing is working
 }
