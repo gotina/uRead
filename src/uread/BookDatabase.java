@@ -18,6 +18,8 @@ public class BookDatabase {
 	public static final int S_AUTHOR = 2;
 /** Indicates the ISBN field for {@link #search} */
 	public static final int S_ISBN = 4;
+/** Indicates the Description field for {@link #search} */
+	public static final int S_DESCRIPTION = 8;
 
 /** Creates an empty {@link BookDatabase}.
 */	public BookDatabase() { books = new ArrayList<Book>(); }
@@ -56,9 +58,40 @@ public class BookDatabase {
 /** Searches this {@link BookDatabase}.
 @param fields Which fields to check - a sum of at least one of {@link BookDatabase#S_TITLE}, {@link BookDatabase#S_AUTHOR}, and {@link BookDatabase#S_ISBN}.
 @param query The string to attempt to match.  Matching rules may vary according to field (e.g. {@link BookDatabase#S_ISBN} is not sensitive to hyphenation).
-@return All books in this {@link BookDatabase} which have a match to the query in one or more of the indicated fields.
-*/	public SearchResults search( int fields, String query )
-	{ throw new RuntimeException( "Unimplemented" ); }
+@return A {@link SearchResults} of all books in this {@link BookDatabase} which have a match to the query in one or more of the indicated fields - if there are no matches, the {@link SearchResults} will be empty (the return value will not be null).
+*/	public SearchResults search( int fields, String query ) {
+		SearchResults r = new SearchResults( fields, query );
+		Keywords k = new Keywords( query );
+		int i=0;
+		Book b; String m;
+		while( i < books.size() ) {
+			b=books.get(i);
+			if( 0 != (fields & S_TITLE) ) {
+				m = k.first( b.getTitle() );
+				if( null != m ) {
+					r.add( new SearchResult( b, S_TITLE, m ) );
+				}
+			} else if( 0 != (fields & S_AUTHOR) ) {
+				m = k.first( b.getAuthor() );
+				if( null != m ) {
+					r.add( new SearchResult( b, S_AUTHOR, m ) );
+				}
+			} else if( 0 != (fields & S_ISBN) ) {
+				m = k.first( b.getISBN13() );
+				if( null == m ) { m = k.first( b.getISBN10() ); }
+				if( null != m ) {
+					r.add( new SearchResult( b, S_ISBN, m ) );
+				}
+			} else if( 0 != (fields & S_DESCRIPTION) ) {
+				m = k.first( b.getDescription() );
+				if( null != m ) {
+					r.add( new SearchResult( b, S_DESCRIPTION, m ) );
+				}
+			}
+			i++;
+		}
+		return r;
+	}
 
 /** Generates a String representation of this entire database.
 @return A String representation of this database

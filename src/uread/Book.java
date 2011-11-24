@@ -2,7 +2,6 @@
 package uread;
 
 import java.lang.String;
-import java.util.ArrayList;
 
 /** Represents a book, usually a book cataloged in a {@link BookDatabase} */
 public class Book {

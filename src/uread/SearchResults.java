@@ -8,23 +8,43 @@ import java.util.ArrayList;
 public class SearchResults {
 
 /** Never create this yourself, always use {@link BookDatabase#search}.
-*/	public SearchResults() { fields=0; query=null; results=null; }
+*/	public SearchResults() { fields=0; query=null; results=new ArrayList<SearchResult>(); }
+
+/** Never create this yourself, always use {@link BookDatabase#search}.
+*/	public SearchResults( int newFields, String newQuery )
+	{ setFields( newFields ); setQuery( newQuery ); results=new ArrayList<SearchResult>(); }
 
 /** Returns the fields searched to generate these results.
   * A sum of at least one of {@link BookDatabase#S_TITLE}, {@link BookDatabase#S_AUTHOR}, and
   * {@link BookDatabase#S_ISBN}.
 @return A sum of at least one of {@link BookDatabase#S_TITLE}, {@link BookDatabase#S_AUTHOR}, and {@link BookDatabase#S_ISBN}.
-*/	public int fields() { return fields; }
+*/	public int getFields() { return fields; }
+
+/** Replaces the record of the fields searched to generate these results.
+  * To generate new results, use {@link BookDatabase#search}.
+@param newFields A sum of at least one of {@link BookDatabase#S_TITLE}, {@link BookDatabase#S_AUTHOR}, and {@link BookDatabase#S_ISBN}.
+*/	public void setFields( int newFields ) { fields = newFields; }
 
 /** Returns the search query string used to generate these results.
 @return The search query string used to generate these results.
-*/	public String query() { return query; }
+*/	public String getQuery() { return query; }
+
+/** Replaces the record of the search query string used to generate these results.
+  * To generate new results, use {@link BookDatabase#search}.
+@param newQuery A query string
+@return The search query string used to generate these results.
+*/	public void setQuery( String newQuery ) { query = newQuery; }
+
+/** Adds a {@link SearchResult} to the set.
+@param result The {@link SearchResult} to add
+@return Returns true (to match {@link Collection#add(E)})
+*/	public boolean add( SearchResult result ) { return results.add( result ); } //TODO: prevent duplicate results
 
 /** Returns the number of {@link SearchResult}s found.
 @return The number of {@link SearchResult}s found
 */	public int count() { return results.size(); }
 
-/** Gets one particular result.
+/** Gets one particular {@link SearchResult}.
 @param index Which {@link SearchResult} to get, valid from 0 to {@link #count()}-1 (inclusive)
 @return The specified {@link SearchResult}
 */	public SearchResult get( int index ) { return results.get( index ); }
