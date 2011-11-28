@@ -1,0 +1,13 @@
+!!uRead.Book {ISBN10: null, ISBN13: '9780387776514', author: Charles E. Burkhardt,
+  description: 'Intended to be used as a textbook for an introductory course in quantum
+    mechanics, and to be retained by the student for later use as a reference', location: null,
+  title: Foundations of Quantum Physics, year: 2008}
+--- !!uRead.Book {ISBN10: null, ISBN13: '9780321385178', author: Davic C. Lay, description: 'David
+    Lay introduces linear algebra concepts (such as linear independence, spanning,
+    subspace, vector space, and linear transformations) in a familiar, concrete R^n
+    setting, develops them gradually, and returns to them again and again throughout
+    the text so that when discussed in the abstract, these concepts are more accessible.',
+  location: null, title: Linear Algebra and its Applications, year: 2012}
+--- !!uRead.Book {ISBN10: '0764588745', ISBN13: '9780764588747', author: Barry Burd,
+  description: null, location: '1st Floor, section A1 C7', title: Beginning Programming with Java For Dummies,
+  year: 0}

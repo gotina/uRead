@@ -47,7 +47,8 @@ public class User {
 @throws RuntimeException If you have an obsolete version of Java
 */	public boolean checkPassword( String password )
 	{
-		KeySpec spec = new PBEKeySpec( password.toCharArray(), salt, 2048, 160 );
+		byte[] salty = new BigInteger( salt, 16 ).toByteArray();
+		KeySpec spec = new PBEKeySpec( password.toCharArray(), salty, 2048, 160 );
 		SecretKeyFactory f;
 		byte[] raw;
 		try { f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1"); }
@@ -65,9 +66,9 @@ public class User {
 @throws RuntimeException If you have an obsolete version of Java
 */	public void changePassword( String password )
 	{
-		salt = new byte[16];
-		new Random().nextBytes(salt);
-		KeySpec spec = new PBEKeySpec( password.toCharArray(), salt, 2048, 160 );
+		byte[] salty = new byte[16];
+		new Random().nextBytes(salty);
+		KeySpec spec = new PBEKeySpec( password.toCharArray(), salty, 2048, 160 );
 		SecretKeyFactory f;
 		byte[] raw;
 		try { f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1"); }
@@ -76,6 +77,7 @@ public class User {
 		try { raw = f.generateSecret(spec).getEncoded(); }
 		catch( java.security.spec.InvalidKeySpecException oops )
 		{ throw new RuntimeException( "Java library error generating password hash: Invalid Key Spec generated from password" ); }
+		salt = new BigInteger(1, salty).toString(16);
 		hash = new BigInteger(1, raw).toString(16);
 	}
 
@@ -89,11 +91,11 @@ public class User {
 
 /** Returns this {@link User}'s password salt.  You should use checkPassword.
 @return The password salt of this {@link User}
-*/	public byte[] getSalt() { return salt; }
+*/	public String getSalt() { return salt; }
 
 /** Replaces the password salt of this {@link User}.  You should use changePassword.
 @param newhash The new password salt for this {@link User}
-*/	public void setSalt( byte[] newsalt ) { salt = newsalt; }
+*/	public void setSalt( String newsalt ) { salt = newsalt; }
 
 /** Generate a multiline string representation of this {@link Book}.
 @return A multiline string representation of this {@link Book}
@@ -108,7 +110,7 @@ public class User {
 
 	private String name;
 	private String hash; //of the password
-	private byte[] salt; //used for the hash
+	private String salt; //used for the hash
 	private int type;
 }
 

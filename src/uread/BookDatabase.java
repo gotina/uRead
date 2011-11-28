@@ -20,6 +20,8 @@ public class BookDatabase {
 	public static final int S_ISBN = 4;
 /** Indicates the Description field for {@link #search} */
 	public static final int S_DESCRIPTION = 8;
+/** Indicates the Location field for {@link #search} */
+	public static final int S_LOCATION = 16;
 
 /** Creates an empty {@link BookDatabase}.
 */	public BookDatabase() { books = new ArrayList<Book>(); }

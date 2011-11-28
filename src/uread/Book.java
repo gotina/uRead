@@ -8,7 +8,7 @@ public class Book {
 
 /** Empty constructor creates a book with no properties.  You shouldn't use this.
   * If used, follow immediately by setters for at least title, author, year, ISBN13, and description.
-*/	public Book() { title = edition = author = publisher = ISBN10 = ISBN13 = description = null; year = 0; }
+*/	public Book() { title = edition = author = publisher = ISBN10 = ISBN13 = description = location = null; year = 0; }
 
 /** Normal constructor, creates a book with the most important fields set.
 */	public Book( String newTitle, String newAuthor, int newyear, String newISBN13, String newDescription )
@@ -51,6 +51,9 @@ public class Book {
 @return This {@link Book}'s 10-digit ISBN conforming to the 1970 standard
 */	public String getISBN10() { return ISBN10; }
 
+/** Replace this {@link Book}'s 10-digit ISBN conforming to the 1970 standard.
+*/	public void setISBN10( String newISBN10 ) { ISBN10 = newISBN10; } //TODO: validation
+
 /** Returns this {@link Book}'s 13-digit ISBN conforming to the 2007 standard.
 @return This {@link Book}'s 13-digit ISBN conforming to the 2007 standard
 */	public String getISBN13() { return ISBN13; }
@@ -66,6 +69,14 @@ public class Book {
 @return This {@link Book}'s previous description
 */	public void setDescription( String newdescription ) { description = newdescription; }
 
+/** Returns this {@link Book}'s location.
+@return This {@link Book}'s location
+*/	public String getLocation() { return location; }
+
+/** Replace this {@link Book}'s location.
+@return This {@link Book}'s previous location
+*/	public void setLocation( String newlocation ) { location = newlocation; }
+
 /** Generate a multiline string representation of this {@link Book}.
 @return A multiline string representation of this {@link Book}
 */	public String toString() {
@@ -78,6 +89,7 @@ public class Book {
 		if( null != ISBN10 ) { s += "ISBN10: "+getISBN10()+"\n"; }
 		if( null != ISBN13 ) { s += "ISBN13: "+getISBN13()+"\n"; }
 		if( null != description ) { s += "description: "+getDescription()+"\n"; }
+		if( null != location ) { s += "location: "+getLocation()+"\n"; }
 		return s;
 	}
 
@@ -89,5 +101,6 @@ public class Book {
 	private String ISBN10; //exactly 10 chars
 	private String ISBN13; //exactly 13 chars
 	private String description;
+	private String location;
 }
 
