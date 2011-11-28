@@ -1,4 +1,4 @@
-package uread;
+package uRead;
 
 import java.lang.String;
 import java.util.ArrayList;

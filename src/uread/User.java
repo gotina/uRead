@@ -1,5 +1,5 @@
 
-package uread;
+package uRead;
 
 import java.lang.String;
 import java.util.Random; //for password hashing
@@ -19,10 +19,8 @@ public class User {
 @param username The username for this {@link User}
 @param password The password for this {@link User}
 @param type The type of user this is - one of {@link UserList#U_PATRON}, {@link UserList#U_EMPLOYEE}, or {@link UserList#U_ADMINISTRATOR}.
-@throws java.security.NoSuchAlgorithmException If you have an obsolete version of Java
-@throws java.security.spec.InvalidKeySpecException If you have an obsolete version of Java
+@throws RuntimeException If you have an obsolete version of Java
 */	public User( String username, String password, int newtype )
-		throws java.security.NoSuchAlgorithmException, java.security.spec.InvalidKeySpecException
 	{ setName( username ); changePassword( password ); setType( newtype ); }
 
 /** Returns this {@link User}'s username
@@ -46,30 +44,38 @@ public class User {
 /** Tests weather the provided password is valid to authenticate this {@link User}
 @param password The password to test
 @return True if the password is valid, false if it is not.
-@throws java.security.NoSuchAlgorithmException If you have an obsolete version of Java
-@throws java.security.spec.InvalidKeySpecException If you have an obsolete version of Java
+@throws RuntimeException If you have an obsolete version of Java
 */	public boolean checkPassword( String password )
-		throws java.security.NoSuchAlgorithmException, java.security.spec.InvalidKeySpecException
 	{
-		KeySpec spec = new PBEKeySpec("password".toCharArray(), salt, 2048, 160);
-		SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-		byte[] raw = f.generateSecret(spec).getEncoded();
+		KeySpec spec = new PBEKeySpec( password.toCharArray(), salt, 2048, 160 );
+		SecretKeyFactory f;
+		byte[] raw;
+		try { f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1"); }
+		catch( java.security.NoSuchAlgorithmException oops )
+		{ throw new RuntimeException( "Java library error generating password hash: No Such Algorithm \"PBKDF2WithHmacSHA1\"" ); }
+		try { raw = f.generateSecret(spec).getEncoded(); }
+		catch( java.security.spec.InvalidKeySpecException oops )
+		{ throw new RuntimeException( "Java library error generating password hash: Invalid Key Spec generated from password" ); }
 		String test = new BigInteger(1, raw).toString(16);
 		return hash.equals( test );
 	}
 
 /** Changes the password accepted to authenticate this user
 @param password The new password
-@throws java.security.NoSuchAlgorithmException If you have an obsolete version of Java
-@throws java.security.spec.InvalidKeySpecException If you have an obsolete version of Java
+@throws RuntimeException If you have an obsolete version of Java
 */	public void changePassword( String password )
-		throws java.security.NoSuchAlgorithmException, java.security.spec.InvalidKeySpecException
 	{
 		salt = new byte[16];
 		new Random().nextBytes(salt);
-		KeySpec spec = new PBEKeySpec("password".toCharArray(), salt, 2048, 160);
-		SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-		byte[] raw = f.generateSecret(spec).getEncoded();
+		KeySpec spec = new PBEKeySpec( password.toCharArray(), salt, 2048, 160 );
+		SecretKeyFactory f;
+		byte[] raw;
+		try { f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1"); }
+		catch( java.security.NoSuchAlgorithmException oops )
+		{ throw new RuntimeException( "Java library error generating password hash: No Such Algorithm \"PBKDF2WithHmacSHA1\"" ); }
+		try { raw = f.generateSecret(spec).getEncoded(); }
+		catch( java.security.spec.InvalidKeySpecException oops )
+		{ throw new RuntimeException( "Java library error generating password hash: Invalid Key Spec generated from password" ); }
 		hash = new BigInteger(1, raw).toString(16);
 	}
 

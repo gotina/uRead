@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package uread;
+package uRead;
 
 import com.mongodb.BasicDBObject;
 import java.util.regex.Pattern;
