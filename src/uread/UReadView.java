@@ -84,7 +84,7 @@ public class UReadView extends FrameView {
     @Action
     
     public void searchBooks() {
-        //code to search goes here
+        String bookText = this.txtSearchField.getText();
 
     }
     
