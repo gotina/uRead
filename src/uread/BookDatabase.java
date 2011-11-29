@@ -64,33 +64,38 @@ public class BookDatabase {
 */	public SearchResults search( int fields, String query ) {
 		SearchResults r = new SearchResults( fields, query );
 		Keywords k = new Keywords( query );
-		int i=0;
 		Book b; String m;
-		while( i < books.size() ) {
+		for( int i = 0; i < books.size(); i++ ) {
 			b=books.get(i);
 			if( 0 != (fields & S_TITLE) ) {
 				m = k.first( b.getTitle() );
 				if( null != m ) {
 					r.add( new SearchResult( b, S_TITLE, m ) );
+					continue;
 				}
-			} else if( 0 != (fields & S_AUTHOR) ) {
+			}
+			if( 0 != (fields & S_AUTHOR) ) {
 				m = k.first( b.getAuthor() );
 				if( null != m ) {
 					r.add( new SearchResult( b, S_AUTHOR, m ) );
+					continue;
 				}
-			} else if( 0 != (fields & S_ISBN) ) {
+			}
+			if( 0 != (fields & S_ISBN) ) {
 				m = k.first( b.getISBN13() );
 				if( null == m ) { m = k.first( b.getISBN10() ); }
 				if( null != m ) {
 					r.add( new SearchResult( b, S_ISBN, m ) );
+					continue;
 				}
-			} else if( 0 != (fields & S_DESCRIPTION) ) {
+			}
+			if( 0 != (fields & S_DESCRIPTION) ) {
 				m = k.first( b.getDescription() );
 				if( null != m ) {
 					r.add( new SearchResult( b, S_DESCRIPTION, m ) );
+					continue;
 				}
 			}
-			i++;
 		}
 		return r;
 	}

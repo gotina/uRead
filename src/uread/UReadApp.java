@@ -93,6 +93,8 @@ public class UReadApp extends SingleFrameApplication {
 							 JOptionPane.ERROR_MESSAGE );
 		}
 	}
+	/* Search database (called from UReadView) */
+	SearchResults search( int fields, String query ) { return db.search( fields, query ); }
 
     /**
      * Main method launching the application.

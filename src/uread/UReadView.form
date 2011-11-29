@@ -58,6 +58,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="btnSearch">
           <Properties>
+            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+              <action class="uRead.UReadView" id="searchBooks" methodName="searchBooks"/>
+            </Property>
             <Property name="text" type="java.lang.String" resourceKey="btnSearch.text"/>
             <Property name="name" type="java.lang.String" value="btnSearch" noResource="true"/>
           </Properties>

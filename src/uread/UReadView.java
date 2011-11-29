@@ -82,7 +82,13 @@ public class UReadView extends FrameView {
     }
 
     @Action
-    public void showAboutBox() {
+
+    public void searchBooks() {
+        String bookText = this.txtSearchField.getText();
+		SearchResults results = UReadApp.getApplication().search( -1, bookText ); //hopefully -1 will match all fields
+    }
+
+	public void showAboutBox() {
         if (aboutBox == null) {
             JFrame mainFrame = UReadApp.getApplication().getMainFrame();
             aboutBox = new UReadAboutBox(mainFrame);
@@ -123,6 +129,9 @@ public class UReadView extends FrameView {
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(uRead.UReadApp.class).getContext().getResourceMap(UReadView.class);
         txtSearchField.setText(resourceMap.getString("txtSearchField.text")); // NOI18N
         txtSearchField.setName("txtSearchField"); // NOI18N
+
+        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(uRead.UReadApp.class).getContext().getActionMap(UReadView.class, this);
+        btnSearch.setAction(actionMap.get("searchBooks")); // NOI18N
 
         btnSearch.setText(resourceMap.getString("btnSearch.text")); // NOI18N
         btnSearch.setName("btnSearch"); // NOI18N
@@ -175,7 +184,6 @@ public class UReadView extends FrameView {
         fileMenu.setText(resourceMap.getString("fileMenu.text")); // NOI18N
         fileMenu.setName("fileMenu"); // NOI18N
 
-        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(uRead.UReadApp.class).getContext().getActionMap(UReadView.class, this);
         exitMenuItem.setAction(actionMap.get("quit")); // NOI18N
         exitMenuItem.setName("exitMenuItem"); // NOI18N
         fileMenu.add(exitMenuItem);
