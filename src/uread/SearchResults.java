@@ -49,6 +49,18 @@ public class SearchResults {
 @return The specified {@link SearchResult}
 */	public SearchResult get( int index ) { return results.get( index ); }
 
+/** Generates a String representation of these {@link SearchResults}
+@return A String representation of this these {@link SearchResults}
+*/	public String toString() {
+		String s = "Results for fieldcode "+fields+" and string \""+query+"\"\n";
+		if( 0 == results.size() ) { s += "--- No results.\n"; return s; }
+		SearchResult r=results.get(0);
+		s += "--- Result 1:  "+r.toString();
+		int i=1;
+		while( i < results.size() ) { r=results.get(i); i++; s+= "\n--- Result "+i+":\n"+r.toString();  }
+		return s;
+	}
+
 	private int fields;
 	private String query;
 	private ArrayList<SearchResult> results;

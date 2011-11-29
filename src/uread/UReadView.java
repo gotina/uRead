@@ -81,11 +81,25 @@ public class UReadView extends FrameView {
         });
     }
 
-    @Action
+	@Action
+	public void chooseField() {
+		int f = this.cbxSearchCriteria.getSelectedIndex(); //Better keep this in sync...
+		switch( f ) {
+			case 1: field = BookDatabase.S_TITLE; break;
+			case 2: field = BookDatabase.S_AUTHOR; break;
+			case 3: field = BookDatabase.S_ISBN; break;
+			case 4: field = BookDatabase.S_DESCRIPTION; break;
+			case 5: field = BookDatabase.S_LOCATION; break;
+			default: field = -1; break;
+		}
+		System.out.println( "Selected field "+field+" (menu item "+f+")" );
+	}
 
+    @Action
 	public void searchBooks() {
 		String bookText = this.txtSearchField.getText();
 		SearchResults results = UReadApp.getApplication().search( -1, bookText ); //hopefully -1 will match all fields
+		System.out.println( results.toString() ); //DEBUG
 	}
 
 	public void showAboutBox() {
@@ -132,11 +146,11 @@ public class UReadView extends FrameView {
 
         javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(uRead.UReadApp.class).getContext().getActionMap(UReadView.class, this);
         btnSearch.setAction(actionMap.get("searchBooks")); // NOI18N
-
         btnSearch.setText(resourceMap.getString("btnSearch.text")); // NOI18N
         btnSearch.setName("btnSearch"); // NOI18N
 
-        cbxSearchCriteria.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "author", "book" }));
+        cbxSearchCriteria.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "(Match Any)", "Title", "Author", "ISBN", "Description", "Location" }));
+        cbxSearchCriteria.setAction(actionMap.get("chooseField")); // NOI18N
         cbxSearchCriteria.setName("cbxSearchCriteria"); // NOI18N
 
         btnLogin.setText(resourceMap.getString("btnLogin.text")); // NOI18N
@@ -150,7 +164,7 @@ public class UReadView extends FrameView {
         mainPanelLayout.setHorizontalGroup(
             mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(mainPanelLayout.createSequentialGroup()
-                .addContainerGap(96, Short.MAX_VALUE)
+                .addContainerGap(63, Short.MAX_VALUE)
                 .add(mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, mainPanelLayout.createSequentialGroup()
                         .add(cbxSearchCriteria, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -265,4 +279,6 @@ public class UReadView extends FrameView {
     private int busyIconIndex = 0;
 
     private JDialog aboutBox;
+	
+	private int field; // the search field selector
 }

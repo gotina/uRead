@@ -11,7 +11,7 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
-                  <EmptySpace pref="96" max="32767" attributes="0"/>
+                  <EmptySpace pref="63" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
                           <Component id="cbxSearchCriteria" min="-2" max="-2" attributes="0"/>
@@ -68,10 +68,17 @@
         <Component class="javax.swing.JComboBox" name="cbxSearchCriteria">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="2">
-                <StringItem index="0" value="author"/>
-                <StringItem index="1" value="book"/>
+              <StringArray count="6">
+                <StringItem index="0" value="(Match Any)"/>
+                <StringItem index="1" value="Title"/>
+                <StringItem index="2" value="Author"/>
+                <StringItem index="3" value="ISBN"/>
+                <StringItem index="4" value="Description"/>
+                <StringItem index="5" value="Location"/>
               </StringArray>
+            </Property>
+            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+              <action class="uRead.UReadView" id="chooseField" methodName="chooseField"/>
             </Property>
             <Property name="name" type="java.lang.String" value="cbxSearchCriteria" noResource="true"/>
           </Properties>

@@ -27,6 +27,12 @@ public class SearchResult {
 @return The string in the {@link #field} which matched the query which generated this result.
 */	public String string() { return string; }
 
+/** Generate a multiline string representation of this {@link Book}.
+@return A multiline string representation of this {@link Book}
+*/	public String toString() {
+		return "field "+field+" matched \""+string+"\" on this book:\n"+book.toString();
+	}
+
 	private Book book;
 	private int field;
 	private String string;
