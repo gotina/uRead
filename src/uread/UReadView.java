@@ -83,10 +83,10 @@ public class UReadView extends FrameView {
 
     @Action
 
-    public void searchBooks() {
-        String bookText = this.txtSearchField.getText();
+	public void searchBooks() {
+		String bookText = this.txtSearchField.getText();
 		SearchResults results = UReadApp.getApplication().search( -1, bookText ); //hopefully -1 will match all fields
-    }
+	}
 
 	public void showAboutBox() {
         if (aboutBox == null) {
