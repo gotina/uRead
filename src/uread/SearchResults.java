@@ -61,6 +61,10 @@ public class SearchResults {
 		return s;
 	}
 
+        public ArrayList<SearchResult> toList(){
+            return results;
+        }
+
 	private int fields;
 	private String query;
 	private ArrayList<SearchResult> results;
