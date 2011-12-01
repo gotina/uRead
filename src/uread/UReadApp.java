@@ -53,8 +53,8 @@ public class UReadApp extends SingleFrameApplication {
 		}
 		// Start with empty list and results
 		myResults = new SearchResults();
-		//myList = new BookList(); // Can't do this without Zack's BookList class.
-		// Setup onExit procedure to save DataBase and UserList
+		myList = new BookDatabase();
+		// Setup onExit procedure to save DataBase and UserList (not myResults or myList)
 		// from http://stackoverflow.com/questions/2467070/onexit-event-for-a-swing-application
 		Runtime.getRuntime().addShutdownHook( new Thread() {
 			@Override public void run() { save(); }
@@ -96,12 +96,16 @@ public class UReadApp extends SingleFrameApplication {
 							 JOptionPane.ERROR_MESSAGE );
 		}
 	}
+
 	/* Search database (called from UReadView) */
 	SearchResults search( int fields, String query ) {
 		myResults = db.search( fields, query );
 		return myResults;
 	}
 
+	/* Add to myList (called from ResultView) */
+	boolean addToList( Book newBook ) { return myList.add( newBook ); } //TODO: prevent duplicates
+	
     /**
      * Main method launching the application.
      */
@@ -114,5 +118,5 @@ public class UReadApp extends SingleFrameApplication {
 	private BookDatabase db;
 	private UserList ul;
 	private SearchResults myResults;
-	// private BookList myList; // Can't do this without Zack's BookList class.
+	private BookDatabase myList;
 }

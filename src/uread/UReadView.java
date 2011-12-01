@@ -4,6 +4,8 @@
 
 package uRead;
 
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.SingleFrameApplication;
@@ -11,10 +13,13 @@ import org.jdesktop.application.FrameView;
 import org.jdesktop.application.TaskMonitor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import javax.swing.Timer;
 import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 /**
  * The application's main frame.
@@ -80,10 +85,12 @@ public class UReadView extends FrameView {
             }
         });
     }
-
-	@Action
-	public void chooseField() {
-		int f = this.cbxSearchCriteria.getSelectedIndex(); //Better keep this in sync...
+    
+    @Action
+	public void searchBooks() {
+		String bookText = this.txtSearchField.getText();
+		int f = this.cbxSearchCriteria.getSelectedIndex(); //Better keep selector in sync with field constants
+		int field;
 		switch( f ) {
 			case 1: field = BookDatabase.S_TITLE; break;
 			case 2: field = BookDatabase.S_AUTHOR; break;
@@ -92,15 +99,21 @@ public class UReadView extends FrameView {
 			case 5: field = BookDatabase.S_LOCATION; break;
 			default: field = -1; break;
 		}
-		System.out.println( "Selected field "+field+" (menu item "+f+")" );
-	}
+		SearchResults results = UReadApp.getApplication().search( field, bookText ); //hopefully -1 will match all fields
 
-    @Action
-	public void searchBooks() {
-		String bookText = this.txtSearchField.getText();
-		SearchResults results = UReadApp.getApplication().search( -1, bookText ); //hopefully -1 will match all fields
-		System.out.println( results.toString() ); //DEBUG
+                for( SearchResult r : results ){
+                    ResultView resultView = new ResultView(r);
+                    this.spnSearchResults.getViewport().add(resultView);
+					System.out.println( " --- added to view:\n"+r.getBook() ); //DEBUG
+                    //this.spnSearchResults.repaint();
+                 //  this.spnSearchResults.getViewport().
+                    //System.out.println("-----");
+                    ///System.out.println(r);
+                    System.out.println(spnSearchResults.getViewport().getComponentCount()); //DEBUG
+                }
+  
 	}
+    
 
 	public void showAboutBox() {
         if (aboutBox == null) {
@@ -126,6 +139,8 @@ public class UReadView extends FrameView {
         cbxSearchCriteria = new javax.swing.JComboBox();
         btnLogin = new javax.swing.JButton();
         btnMyList = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        spnSearchResults = new javax.swing.JScrollPane();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
@@ -138,9 +153,10 @@ public class UReadView extends FrameView {
         progressBar = new javax.swing.JProgressBar();
         jScrollPane1 = new javax.swing.JScrollPane();
 
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(uRead.UReadApp.class).getContext().getResourceMap(UReadView.class);
+        mainPanel.setBackground(resourceMap.getColor("mainPanel.background")); // NOI18N
         mainPanel.setName("mainPanel"); // NOI18N
 
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(uRead.UReadApp.class).getContext().getResourceMap(UReadView.class);
         txtSearchField.setText(resourceMap.getString("txtSearchField.text")); // NOI18N
         txtSearchField.setName("txtSearchField"); // NOI18N
 
@@ -150,7 +166,6 @@ public class UReadView extends FrameView {
         btnSearch.setName("btnSearch"); // NOI18N
 
         cbxSearchCriteria.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "(Match Any)", "Title", "Author", "ISBN", "Description", "Location" }));
-        cbxSearchCriteria.setAction(actionMap.get("chooseField")); // NOI18N
         cbxSearchCriteria.setName("cbxSearchCriteria"); // NOI18N
 
         btnLogin.setText(resourceMap.getString("btnLogin.text")); // NOI18N
@@ -159,23 +174,41 @@ public class UReadView extends FrameView {
         btnMyList.setText(resourceMap.getString("btnMyList.text")); // NOI18N
         btnMyList.setName("btnMyList"); // NOI18N
 
+        jLabel1.setIcon(resourceMap.getIcon("jLabel1.icon")); // NOI18N
+        jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
+        jLabel1.setName("jLabel1"); // NOI18N
+
+        spnSearchResults.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        spnSearchResults.setViewportBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        spnSearchResults.setAutoscrolls(true);
+        spnSearchResults.setName("spnSearchResults"); // NOI18N
+
         org.jdesktop.layout.GroupLayout mainPanelLayout = new org.jdesktop.layout.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
             mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(mainPanelLayout.createSequentialGroup()
-                .addContainerGap(63, Short.MAX_VALUE)
-                .add(mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, mainPanelLayout.createSequentialGroup()
-                        .add(cbxSearchCriteria, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(txtSearchField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 342, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(btnSearch))
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, mainPanelLayout.createSequentialGroup()
-                        .add(btnMyList)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(btnLogin)))
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, mainPanelLayout.createSequentialGroup()
+                .addContainerGap(190, Short.MAX_VALUE)
+                .add(jLabel1)
+                .add(179, 179, 179))
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, mainPanelLayout.createSequentialGroup()
+                .add(mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, mainPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .add(spnSearchResults, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 659, Short.MAX_VALUE))
+                    .add(mainPanelLayout.createSequentialGroup()
+                        .add(54, 54, 54)
+                        .add(mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                            .add(mainPanelLayout.createSequentialGroup()
+                                .add(btnMyList)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(btnLogin))
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, mainPanelLayout.createSequentialGroup()
+                                .add(cbxSearchCriteria, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .add(117, 117, 117)
+                                .add(txtSearchField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(btnSearch)))))
                 .addContainerGap())
         );
         mainPanelLayout.setVerticalGroup(
@@ -185,12 +218,16 @@ public class UReadView extends FrameView {
                 .add(mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(btnLogin)
                     .add(btnMyList))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 183, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 43, Short.MAX_VALUE)
+                .add(jLabel1)
+                .add(18, 18, 18)
                 .add(mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(btnSearch)
                     .add(txtSearchField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(cbxSearchCriteria, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(221, 221, 221))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(spnSearchResults, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 203, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(9, 9, 9))
         );
 
         menuBar.setName("menuBar"); // NOI18N
@@ -228,11 +265,11 @@ public class UReadView extends FrameView {
         statusPanel.setLayout(statusPanelLayout);
         statusPanelLayout.setHorizontalGroup(
             statusPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(statusPanelSeparator, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 653, Short.MAX_VALUE)
+            .add(statusPanelSeparator, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 699, Short.MAX_VALUE)
             .add(statusPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .add(statusMessageLabel)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 457, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 503, Short.MAX_VALUE)
                 .add(progressBar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(statusAnimationLabel)
@@ -262,10 +299,12 @@ public class UReadView extends FrameView {
     private javax.swing.JButton btnMyList;
     private javax.swing.JButton btnSearch;
     private javax.swing.JComboBox cbxSearchCriteria;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JProgressBar progressBar;
+    private javax.swing.JScrollPane spnSearchResults;
     private javax.swing.JLabel statusAnimationLabel;
     private javax.swing.JLabel statusMessageLabel;
     private javax.swing.JPanel statusPanel;
@@ -279,6 +318,4 @@ public class UReadView extends FrameView {
     private int busyIconIndex = 0;
 
     private JDialog aboutBox;
-	
-	private int field; // the search field selector
 }

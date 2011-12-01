@@ -52,6 +52,7 @@ public class Book {
 */	public String getISBN10() { return ISBN10; }
 
 /** Replace this {@link Book}'s 10-digit ISBN conforming to the 1970 standard.
+@param newISBN10 This {@link Book}'s 10-digit ISBN conforming to the 1970 standard
 */	public void setISBN10( String newISBN10 ) { ISBN10 = newISBN10; } //TODO: validation
 
 /** Returns this {@link Book}'s 13-digit ISBN conforming to the 2007 standard.
@@ -59,6 +60,7 @@ public class Book {
 */	public String getISBN13() { return ISBN13; }
 
 /** Replace this {@link Book}'s 13-digit ISBN conforming to the 2007 standard.
+@param newISBN13 This {@link Book}'s 13-digit ISBN conforming to the 2007 standard
 */	public void setISBN13( String newISBN13 ) { ISBN13 = newISBN13; } //TODO: validation; derive ISBN10
 
 /** Returns this {@link Book}'s description.

@@ -15,7 +15,7 @@ public class SearchResult {
 
 /** Returns the {@link Book} that this result represents.
 @return The {@link Book} in which {@link #string} in {@link #field} matched the query which generated this result.
-*/	public Book book() { return book; }
+*/	public Book getBook() { return book; }
 
 /** Returns the information field which matched the query which generated this result.
   * One of {@link BookDatabase#S_TITLE}, {@link BookDatabase#S_AUTHOR},

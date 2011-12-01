@@ -22,6 +22,7 @@ public class BookDatabase {
 	public static final int S_DESCRIPTION = 8;
 /** Indicates the Location field for {@link #search} */
 	public static final int S_LOCATION = 16;
+//CONSISTENCY: this and the search UI field selector must change together
 
 /** Creates an empty {@link BookDatabase}.
 */	public BookDatabase() { books = new ArrayList<Book>(); }
