@@ -31,7 +31,9 @@ import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -49,8 +51,10 @@ public class UReadView extends FrameView {
 
 
 
-
-
+        this.btnAddBook.setVisible(false);
+        this.btnRemove.setVisible(false);
+        this.btnEdit.setVisible(false);
+        this.btnLogout.setVisible(false);
 
         // status bar initialization - message timeout, idle icon and busy animation, etc
         ResourceMap resourceMap = getResourceMap();
@@ -142,6 +146,7 @@ public class UReadView extends FrameView {
         String bookText = this.txtSearchField.getText();
         results = UReadApp.getApplication().search(-1, bookText); //hopefully -1 will match all fields
         DefaultTableModel tableModel = (DefaultTableModel) jTable1.getModel();
+        tableModel.setRowCount(0);
 
         int i = 0;
         for (SearchResult r : results.toList()) {
@@ -149,10 +154,32 @@ public class UReadView extends FrameView {
         }
 
     }
-
     JTable table = new JTable();
     DefaultTableModel myListModel = (DefaultTableModel) table.getModel();
 
+    
+    @Action
+    public void addBooks() {
+        JFrame frame = new JFrame();
+        frame.setBounds(250, 250, 500, 500);
+
+
+        frame.add(new AddBook());
+
+        frame.setVisible(true);
+    }
+    
+    
+    @Action
+    public void Logout(){
+        this.btnAddBook.setVisible(false);
+        this.btnRemove.setVisible(false);
+        this.btnEdit.setVisible(false);
+        this.btnLogout.setVisible(false);
+        this.txtUserName.setVisible(true);
+        this.txtPassword.setVisible(true);
+        this.btnLogin.setVisible(true);
+    }
     
     @Action
     public void myList() {
@@ -162,7 +189,7 @@ public class UReadView extends FrameView {
         content.setBackground(Color.white);
         content.setLayout(new FlowLayout());
 
-        if (table.getColumnCount() == 0){
+        if (table.getColumnCount() == 0) {
             myListModel.addColumn("Title");
             myListModel.addColumn("Author");
             myListModel.addColumn("Year");
@@ -171,11 +198,11 @@ public class UReadView extends FrameView {
             myListModel.addColumn("Description");
             myListModel.addColumn("Location");
         }
-        JButton button1 = new JButton("Print this list");
+        JButton button1 = new JButton("print this list");
+        JButton button2 = new JButton("clear this list");
         button1.addActionListener(new ActionListener() {
- 
-            public void actionPerformed(ActionEvent e)
-            {
+
+            public void actionPerformed(ActionEvent e) {
                 try {
                     table.print();
                 } catch (PrinterException ex) {
@@ -183,34 +210,54 @@ public class UReadView extends FrameView {
                 }
             }
         });
+        
+        button2.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                myListModel.setRowCount(0);
+            }
+        });
 
         JScrollPane scrollPane = new JScrollPane(table);
         content.add(scrollPane);
         content.add(button1);
+        content.add(button2);
 
         frame.setVisible(true);
     }
-    
+
 
     @Action
     public void addToList() {
         for (int r : this.jTable1.getSelectedRows()) {
             int i = 0;
-            myListModel.insertRow(i++, new Object[]{results.get(r).book().getTitle(), results.get(r).book().getAuthor(),results.get(r).book().getYear() ,results.get(r).book().getISBN10(), results.get(r).book().getISBN13(), results.get(r).book().getDescription(), results.get(r).book().getLocation()});
+            myListModel.insertRow(i++, new Object[]{results.get(r).book().getTitle(), results.get(r).book().getAuthor(), results.get(r).book().getYear(), results.get(r).book().getISBN10(), results.get(r).book().getISBN13(), results.get(r).book().getDescription(), results.get(r).book().getLocation()});
         }
-
-
     }
-
+    
+    @Action
+    public void RemoveBook() {
+        for (int r : this.jTable1.getSelectedRows()) {
+        
+        System.out.println(r);    
+            UReadApp.getApplication().removeBook( UReadApp.getApplication().resultsEntry(r).book() );
+            DefaultTableModel newModel = (DefaultTableModel) this.jTable1.getModel();
+            newModel.removeRow(r);
+            //int i = 0;
+            //myListModel.insertRow(i++, new Object[]{results.get(r).book().getTitle(), results.get(r).book().getAuthor(), results.get(r).book().getYear(), results.get(r).book().getISBN10(), results.get(r).book().getISBN13(), results.get(r).book().getDescription(), results.get(r).book().getLocation()});
+        }
+    }
     @Action
     public void login() {
-        JFrame aWindow = new JFrame();
-        aWindow.setBounds(250, 250, 500, 300);
-
-        Container content = aWindow.getContentPane();
-        content.add(new Login());
-        aWindow.setVisible(true);
-
+        String username = this.txtUserName.getText();
+        char[] password = this.txtPassword.getPassword();
+        if (username.equals("iWork")) {
+            this.btnLogin.setVisible(false);
+            this.btnLogout.setVisible(true);
+            this.btnAddBook.setVisible(true);
+            this.btnRemove.setVisible(true);
+            this.txtUserName.setVisible(false);
+            this.txtPassword.setVisible(false);
+        }
     }
 
     public void showAboutBox() {
@@ -241,7 +288,12 @@ public class UReadView extends FrameView {
         spnSearchResults = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btnAddBook = new javax.swing.JButton();
+        txtPassword = new javax.swing.JPasswordField();
+        txtUserName = new javax.swing.JTextField();
+        btnRemove = new javax.swing.JButton();
+        btnEdit = new javax.swing.JButton();
+        btnLogout = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
@@ -258,32 +310,40 @@ public class UReadView extends FrameView {
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(uRead.UReadApp.class).getContext().getResourceMap(UReadView.class);
         mainPanel.setBackground(resourceMap.getColor("mainPanel.background")); // NOI18N
         mainPanel.setName("mainPanel"); // NOI18N
-        mainPanel.setSize(new java.awt.Dimension(700, 700));
+        mainPanel.setPreferredSize(new java.awt.Dimension(900, 500));
+        mainPanel.setSize(new java.awt.Dimension(900, 500));
+        mainPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txtSearchField.setText(resourceMap.getString("txtSearchField.text")); // NOI18N
         txtSearchField.setName("txtSearchField"); // NOI18N
+        mainPanel.add(txtSearchField, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 320, 530, -1));
 
         javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(uRead.UReadApp.class).getContext().getActionMap(UReadView.class, this);
         btnSearch.setAction(actionMap.get("searchBooks")); // NOI18N
         btnSearch.setText(resourceMap.getString("btnSearch.text")); // NOI18N
         btnSearch.setName("btnSearch"); // NOI18N
+        mainPanel.add(btnSearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 320, -1, -1));
 
         cbxSearchCriteria.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "(Match Any)", "Title", "Author", "ISBN", "Description", "Location" }));
         cbxSearchCriteria.setAction(actionMap.get("chooseField")); // NOI18N
         cbxSearchCriteria.setName("cbxSearchCriteria"); // NOI18N
+        mainPanel.add(cbxSearchCriteria, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 320, 164, -1));
 
         btnLogin.setAction(actionMap.get("login")); // NOI18N
         btnLogin.setText(resourceMap.getString("btnLogin.text")); // NOI18N
         btnLogin.setName("btnLogin"); // NOI18N
+        mainPanel.add(btnLogin, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 20, -1, -1));
 
         btnMyList.setAction(actionMap.get("myList")); // NOI18N
         btnMyList.setText(resourceMap.getString("btnMyList.text")); // NOI18N
         btnMyList.setName("btnMyList"); // NOI18N
+        mainPanel.add(btnMyList, new org.netbeans.lib.awtextra.AbsoluteConstraints(17, 21, -1, -1));
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setIcon(resourceMap.getIcon("jLabel1.icon")); // NOI18N
         jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
         jLabel1.setName("jLabel1"); // NOI18N
+        mainPanel.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 90, -1, -1));
 
         spnSearchResults.setBorder(null);
         spnSearchResults.setViewportBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -304,7 +364,7 @@ public class UReadView extends FrameView {
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, true, false, true, false, false
+                false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -312,71 +372,41 @@ public class UReadView extends FrameView {
             }
         });
         jTable1.setName("jTable1"); // NOI18N
-        jTable1.setRowSelectionAllowed(true);
         spnSearchResults.setViewportView(jTable1);
+
+        mainPanel.add(spnSearchResults, new org.netbeans.lib.awtextra.AbsoluteConstraints(34, 360, 780, 216));
 
         jButton1.setAction(actionMap.get("addToList")); // NOI18N
         jButton1.setText(resourceMap.getString("jButton1.text")); // NOI18N
         jButton1.setName("jButton1"); // NOI18N
+        mainPanel.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 580, -1, -1));
 
-        jButton2.setLabel(resourceMap.getString("jButton2.label")); // NOI18N
-        jButton2.setName("jButton2"); // NOI18N
+        btnAddBook.setAction(actionMap.get("addBooks")); // NOI18N
+        btnAddBook.setText(resourceMap.getString("btnAddBook.text")); // NOI18N
+        btnAddBook.setName("btnAddBook"); // NOI18N
+        mainPanel.add(btnAddBook, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 21, -1, -1));
 
-        org.jdesktop.layout.GroupLayout mainPanelLayout = new org.jdesktop.layout.GroupLayout(mainPanel);
-        mainPanel.setLayout(mainPanelLayout);
-        mainPanelLayout.setHorizontalGroup(
-            mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(mainPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                        .add(mainPanelLayout.createSequentialGroup()
-                            .add(spnSearchResults, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 808, Short.MAX_VALUE)
-                            .addContainerGap())
-                        .add(mainPanelLayout.createSequentialGroup()
-                            .add(mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                                .add(mainPanelLayout.createSequentialGroup()
-                                    .add(jButton2)
-                                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                    .add(btnMyList)
-                                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                    .add(btnLogin))
-                                .add(org.jdesktop.layout.GroupLayout.LEADING, mainPanelLayout.createSequentialGroup()
-                                    .add(cbxSearchCriteria, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 164, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                    .add(txtSearchField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 546, Short.MAX_VALUE)
-                                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                    .add(btnSearch)))
-                            .addContainerGap()))
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, mainPanelLayout.createSequentialGroup()
-                        .add(jButton1)
-                        .addContainerGap())))
-            .add(mainPanelLayout.createSequentialGroup()
-                .add(257, 257, 257)
-                .add(jLabel1)
-                .addContainerGap(261, Short.MAX_VALUE))
-        );
-        mainPanelLayout.setVerticalGroup(
-            mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, mainPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(btnLogin)
-                    .add(btnMyList)
-                    .add(jButton2))
-                .add(19, 19, 19)
-                .add(jLabel1)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 49, Short.MAX_VALUE)
-                .add(mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(btnSearch)
-                    .add(txtSearchField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(cbxSearchCriteria, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(spnSearchResults, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 173, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jButton1)
-                .addContainerGap())
-        );
+        txtPassword.setText(resourceMap.getString("txtPassword.text")); // NOI18N
+        txtPassword.setName("txtPassword"); // NOI18N
+        mainPanel.add(txtPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 20, 117, -1));
+
+        txtUserName.setText(resourceMap.getString("txtUserName.text")); // NOI18N
+        txtUserName.setName("txtUserName"); // NOI18N
+        mainPanel.add(txtUserName, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 20, 121, -1));
+
+        btnRemove.setAction(actionMap.get("RemoveBook")); // NOI18N
+        btnRemove.setText(resourceMap.getString("btnRemove.text")); // NOI18N
+        btnRemove.setName("btnRemove"); // NOI18N
+        mainPanel.add(btnRemove, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 580, -1, -1));
+
+        btnEdit.setText(resourceMap.getString("btnEdit.text")); // NOI18N
+        btnEdit.setName("btnEdit"); // NOI18N
+        mainPanel.add(btnEdit, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 580, -1, -1));
+
+        btnLogout.setAction(actionMap.get("Logout")); // NOI18N
+        btnLogout.setText(resourceMap.getString("btnLogout.text")); // NOI18N
+        btnLogout.setName("btnLogout"); // NOI18N
+        mainPanel.add(btnLogout, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 20, -1, -1));
 
         menuBar.setName("menuBar"); // NOI18N
 
@@ -413,11 +443,11 @@ public class UReadView extends FrameView {
         statusPanel.setLayout(statusPanelLayout);
         statusPanelLayout.setHorizontalGroup(
             statusPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(statusPanelSeparator, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 848, Short.MAX_VALUE)
+            .add(statusPanelSeparator, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 849, Short.MAX_VALUE)
             .add(statusPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .add(statusMessageLabel)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 652, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 653, Short.MAX_VALUE)
                 .add(progressBar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(statusAnimationLabel)
@@ -455,12 +485,15 @@ public class UReadView extends FrameView {
         setStatusBar(statusPanel);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAddBook;
+    private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnLogin;
+    private javax.swing.JButton btnLogout;
     private javax.swing.JButton btnMyList;
+    private javax.swing.JButton btnRemove;
     private javax.swing.JButton btnSearch;
     private javax.swing.JComboBox cbxSearchCriteria;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JFrame jFrame1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
@@ -472,7 +505,9 @@ public class UReadView extends FrameView {
     private javax.swing.JLabel statusAnimationLabel;
     private javax.swing.JLabel statusMessageLabel;
     private javax.swing.JPanel statusPanel;
+    private javax.swing.JPasswordField txtPassword;
     private javax.swing.JTextField txtSearchField;
+    private javax.swing.JTextField txtUserName;
     // End of variables declaration//GEN-END:variables
     private final Timer messageTimer;
     private final Timer busyIconTimer;

@@ -96,11 +96,22 @@ public class UReadApp extends SingleFrameApplication {
 							 JOptionPane.ERROR_MESSAGE );
 		}
 	}
-	/* Search database (called from UReadView) */
+
+        /* Search database (called from UReadView) */
 	SearchResults search( int fields, String query ) {
 		myResults = db.search( fields, query );
 		return myResults;
 	}
+
+        /* Add to database (called from AddBook) */
+	boolean addBook( Book newBook ) { return db.add( newBook ); }
+
+        /* Remove from database (called from UReadView) */
+	boolean removeBook( Book oldBook ) { return db.remove( oldBook ); }
+
+        /* Get a search results entry (called from UReadView) */
+	SearchResult resultsEntry( int i ) { return myResults.get( i ); }
+
 
     /**
      * Main method launching the application.
